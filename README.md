@@ -1,3 +1,5 @@
+[!PodC-banner](images/PodC%20-%20banner.png)
+
 ## Overview
 
 This is a podcast summarization application with a hybrid architecture: a **Python/FastAPI backend** for AI/ML processing and a **React/TypeScript frontend** for the user interface. The application allows users to submit podcasts (via URL or upload), which are then transcribed and summarized using machine learning pipelines.
