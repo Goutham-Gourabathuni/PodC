@@ -1,4 +1,4 @@
-[!PodC-banner](images/PodC%20-%20banner.png)
+![PodC-banner](images/PodC%20-%20banner.png)
 
 ## Overview
 
