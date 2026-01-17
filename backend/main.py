@@ -1,7 +1,9 @@
-from fastapi import FastAPI
+from fastapi import FastAPI, UploadFile, File
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.responses import JSONResponse
 import uvicorn
 import os
+import uuid
 
 from backend.database import init_db
 
@@ -23,6 +25,7 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
+# health check endpoints
 @app.get("/")
 async def root():
     """Health check endpoint."""
@@ -32,6 +35,7 @@ async def root():
 def health():
     return {"status": "ok"}
 
+# auth and pipeline routes
 from backend.auth import router as auth_router
 from backend.pipeline import router as pipeline_router
 
@@ -40,3 +44,27 @@ app.include_router(pipeline_router)
 
 if __name__ == "__main__":
     uvicorn.run("backend.main:app", host="0.0.0.0", port=5000, reload=True)
+
+# audio storage code and endpoints
+AUDIO_STORAGE = "backend/storage/audio"
+os.makedirs(AUDIO_STORAGE, exist_ok=True)
+
+@app.post("/upload-audio")
+async def upload_audio(file: UploadFile = File(...)):
+    """
+    Upload any podcast audio file and store it locally.
+    """
+    file_id = str(uuid.uuid4())
+    file_extension = os.path.splitext(file.filename)[1]
+    filename = f"{file_id}{file_extension}"
+
+    file_path = os.path.join(AUDIO_STORAGE, filename)
+
+    with open(file_path, "wb") as buffer:
+        buffer.write(await file.read())
+
+    return JSONResponse({
+        "podcast_id": file_id,
+        "file_path": file_path
+    })
+
