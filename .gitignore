@@ -1,0 +1,36 @@
+# =====================
+# Python
+# =====================
+venv/
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+
+# Environment variables
+.env
+
+# =====================
+# Node / Frontend
+# =====================
+node_modules/
+dist/
+.vite/
+
+# =====================
+# OS / Editor
+# =====================
+.DS_Store
+Thumbs.db
+
+# =====================
+# Replit / temp
+# =====================
+.local/
+.replit
+attached_assets/
+
+# =====================
+# Archives
+# =====================
+*.tar.gz
