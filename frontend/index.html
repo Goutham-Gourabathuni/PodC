@@ -8,6 +8,15 @@
 </head>
 
 <body>
+
+    <!-- Login section -->
+    <input id="username" placeholder="Enter username" />
+    <button id="loginBtn">Login</button>
+    <button id="logoutBtn">Logout</button>
+
+    <hr />
+
+    <!-- Main section -->
     <div class="container">
         <h1>🎧 PodC - The Podcast Summarizer</h1>
 
@@ -20,6 +29,9 @@
             ⏳ Processing podcast… this may take a few minutes
         </div>
 
+        <button id="historyBtn">📚 My Podcasts</button>
+        <div id="history"></div>
+
         <div id="results" style="display:none;">
             <h2>Topic Summaries</h2>
             <div id="summaries"></div>
@@ -27,6 +39,14 @@
             <h2>Downloads</h2>
             <a id="pdfLink" target="_blank">Download PDF</a><br />
             <a id="docxLink" target="_blank">Download DOCX</a>
+        </div>
+    </div>
+
+    <div id="summaryModal" class="modal" style="display:none;">
+        <div class="modal-content">
+            <span id="closeModal" class="close">&times;</span>
+            <h3>📝 Podcast Summary</h3>
+            <p id="modalSummary"></p>
         </div>
     </div>
 

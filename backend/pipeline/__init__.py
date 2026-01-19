@@ -6,6 +6,7 @@ from backend.services import audio, transcription, nlp, report
 import logging
 import os
 import asyncio
+from backend.auth.deps import get_current_user
 
 router = APIRouter(prefix="/pipeline", tags=["Pipeline"])
 logger = logging.getLogger(__name__)
@@ -75,11 +76,9 @@ async def upload_podcast(
     background_tasks: BackgroundTasks,
     file: UploadFile = File(...),
     title: str = Form(...),
+    user_id: int = Depends(get_current_user),
     db: Session = Depends(get_db)
-):
-    # TODO: Get current user. Using dummy user ID 1 for now.
-    user_id = 1 
-    
+):  
     # Save file
     saved_path = await audio.save_upload_file(file)
     
@@ -104,11 +103,9 @@ async def submit_podcast_url(
     background_tasks: BackgroundTasks,
     url: str,
     title: str,
+    user_id: int = Depends(get_current_user),
     db: Session = Depends(get_db)
 ):
-    # TODO: Get current user
-    user_id = 1
-    
     podcast = Podcast(
         user_id=user_id,
         title=title,
@@ -140,3 +137,47 @@ def get_podcast_status(podcast_id: int, db: Session = Depends(get_db)):
         "topics": result.topics,
         "pdf_path": result.pdf_path
     }
+
+@router.get("/my-podcasts")
+def get_my_podcasts(db: Session = Depends(get_db), user_id: int = Depends(get_current_user)):
+    podcasts = (
+        db.query(Podcast)
+        .filter(Podcast.user_id == user_id)
+        .order_by(Podcast.id.desc())
+        .all()
+    )
+
+    response = []
+    for podcast in podcasts:
+        result = db.query(Result).filter(Result.podcast_id == podcast.id).first()
+
+        response.append({
+            "id": podcast.id,
+            "title": podcast.title,
+            "status": "completed" if result else "processing",
+            "pdf_path": result.pdf_path if result else None,
+            "summary": result.summary if result else None
+        })
+
+    return response
+
+@router.delete("/delete/{podcast_id}")
+def delete_podcast(podcast_id: int, db: Session = Depends(get_db), user_id: int = Depends(get_current_user)):
+    podcast = db.query(Podcast).filter(Podcast.id == podcast_id).first()
+    if not podcast:
+        raise HTTPException(status_code=404, detail="Podcast not found")
+
+    result = db.query(Result).filter(Result.podcast_id == podcast_id).first()
+
+    if result:
+        if os.path.exists(result.pdf_path):
+            os.remove(result.pdf_path)
+        db.delete(result)
+
+    if os.path.exists(podcast.audio_path):
+        os.remove(podcast.audio_path)
+
+    db.delete(podcast)
+    db.commit()
+
+    return {"message": "Podcast deleted"}

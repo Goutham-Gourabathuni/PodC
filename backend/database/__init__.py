@@ -42,7 +42,11 @@ def init_db():
     db = SessionLocal()
     try:
         if not db.query(User).first():
-            default_user = User(email="test@example.com", password_hash="dummyhash")
+            default_user = User(
+                username="testuser",
+                email="test@example.com",
+                password_hash="dummyhash"
+            )
             db.add(default_user)
             db.commit()
     finally:
