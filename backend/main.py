@@ -6,6 +6,10 @@ import os
 import uuid
 
 from backend.database import init_db
+from fastapi.staticfiles import StaticFiles
+# auth and pipeline routes
+from backend.auth import router as auth_router
+from backend.pipeline import router as pipeline_router
 
 app = FastAPI(
     title="Podcast Summarization API",
@@ -68,3 +72,10 @@ async def upload_audio(file: UploadFile = File(...)):
         "file_path": file_path
     })
 
+app.mount("/backend/storage", StaticFiles(directory="backend/storage"), name="storage")
+
+app.mount(
+    "/generated_reports",
+    StaticFiles(directory="generated_reports"),
+    name="generated_reports"
+)

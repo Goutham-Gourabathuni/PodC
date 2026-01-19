@@ -122,3 +122,21 @@ async def submit_podcast_url(
     background_tasks.add_task(process_podcast_background, podcast.id)
     
     return {"message": "Podcast URL submitted and processing started", "podcast_id": podcast.id}
+
+@router.get("/status/{podcast_id}")
+def get_podcast_status(podcast_id: int, db: Session = Depends(get_db)):
+    podcast = db.query(Podcast).filter(Podcast.id == podcast_id).first()
+    if not podcast:
+        raise HTTPException(status_code=404, detail="Podcast not found")
+
+    result = db.query(Result).filter(Result.podcast_id == podcast_id).first()
+
+    if not result:
+        return {"status": "processing"}
+
+    return {
+        "status": "completed",
+        "summary": result.summary,
+        "topics": result.topics,
+        "pdf_path": result.pdf_path
+    }

@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <title>Podcast Summarizer</title>
+    <link rel="stylesheet" href="style.css" />
+</head>
+
+<body>
+    <div class="container">
+        <h1>🎧 PodC - The Podcast Summarizer</h1>
+
+        <input type="file" id="audioFile" accept="audio/*" />
+        <button id="processBtn">Process Podcast</button>
+
+        <div id="status"></div>
+
+        <div id="loader" style="display:none;">
+            ⏳ Processing podcast… this may take a few minutes
+        </div>
+
+        <div id="results" style="display:none;">
+            <h2>Topic Summaries</h2>
+            <div id="summaries"></div>
+
+            <h2>Downloads</h2>
+            <a id="pdfLink" target="_blank">Download PDF</a><br />
+            <a id="docxLink" target="_blank">Download DOCX</a>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+
+</html>
