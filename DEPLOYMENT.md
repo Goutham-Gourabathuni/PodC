@@ -51,4 +51,4 @@ npm run build
 if any issue, the first 'cd frontend-react' and then use the other 2 commands
 ```
 
-The deployed site will call the HuggingFace backend directly through the configured API URL.
+The deployed site will call the Railway backend directly through the configured API URL.

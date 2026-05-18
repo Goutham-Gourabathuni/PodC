@@ -1,4 +1,4 @@
-const API_BASE_URL = (import.meta.env.VITE_API_BASE_URL || "http://127.0.0.1:8000").replace(/\/$/, "");
+const API_BASE_URL = (import.meta.env.VITE_API_BASE_URL || "https://voltrax123-podc-backend.hf.space").replace(/\/$/, "");
 
 async function parseError(response) {
   const text = await response.text();

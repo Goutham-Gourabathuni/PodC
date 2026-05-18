@@ -14,7 +14,7 @@ npm run dev
 The frontend reads the backend URL from:
 
 ```bash
-VITE_API_BASE_URL=http://127.0.0.1:8000
+VITE_API_BASE_URL=https://voltrax123-podc-backend.hf.space
 ```
 
 For a deployed website, set `VITE_API_BASE_URL` to the public HuggingFace backend URL.
