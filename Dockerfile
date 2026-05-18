@@ -2,7 +2,6 @@ FROM python:3.11-slim
 
 ENV PYTHONUNBUFFERED=1 \
     PIP_NO_CACHE_DIR=1 \
-    PORT=7860 \
     MEDIA_DIR=/tmp/podc-media \
     HF_HOME=/data/.cache/huggingface \
     TRANSFORMERS_CACHE=/data/.cache/huggingface \
@@ -28,6 +27,6 @@ COPY pipeline pipeline
 
 RUN mkdir -p "$MEDIA_DIR/uploads" "$MEDIA_DIR/chunks" "$MEDIA_DIR/pdfs" "$HF_HOME"
 
-EXPOSE 7860
+EXPOSE 8080
 
-CMD ["sh", "-c", "uvicorn backend.main:app --host 0.0.0.0 --port ${PORT:-7860}"]
+CMD ["uvicorn","backend.main:app","--host","0.0.0.0","--port","8080"]
