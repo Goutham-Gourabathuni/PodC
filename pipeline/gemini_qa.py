@@ -4,9 +4,18 @@ from google import genai
 
 load_dotenv()
 
-client = genai.Client(
-    api_key=os.getenv("GEMINI_API_KEY")
-)
+client = None
+GEMINI_MODEL = os.getenv("GEMINI_MODEL", "gemini-2.5-flash")
+
+
+def _get_client():
+    global client
+    if client is None:
+        api_key = os.getenv("GEMINI_API_KEY")
+        if not api_key:
+            raise RuntimeError("GEMINI_API_KEY is not configured")
+        client = genai.Client(api_key=api_key)
+    return client
 
 def answer_question(question: str, context: str) -> str:
     """
@@ -31,8 +40,8 @@ Question:
 """
 
     try:
-        response = client.models.generate_content(
-            model="gemini-2.5-flash",
+        response = _get_client().models.generate_content(
+            model=GEMINI_MODEL,
             contents=prompt
         )
         return response.text.strip()

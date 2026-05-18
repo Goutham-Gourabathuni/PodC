@@ -1,14 +1,24 @@
 # pipeline/topic_titles.py
 
+import os
+
 import spacy
 from sklearn.feature_extraction.text import TfidfVectorizer
 
-nlp = spacy.load("en_core_web_sm")
+SPACY_MODEL = os.getenv("SPACY_MODEL", "en_core_web_sm")
+nlp = None
+
+
+def _get_nlp():
+    global nlp
+    if nlp is None:
+        nlp = spacy.load(SPACY_MODEL)
+    return nlp
 
 
 def _extract_candidate_phrases(text):
     """Extract short noun phrases"""
-    doc = nlp(text)
+    doc = _get_nlp()(text)
     phrases = []
 
     for chunk in doc.noun_chunks:

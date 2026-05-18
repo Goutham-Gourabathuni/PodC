@@ -1,13 +1,16 @@
+import os
+
 from sentence_transformers import SentenceTransformer
 
 _model = None
+EMBEDDING_MODEL = os.getenv("EMBEDDING_MODEL", "all-MiniLM-L6-v2")
 
 def get_embedding_model():
     global _model
     if _model is None:
-        print("🔄 Loading MiniLM embedding model...")
-        _model = SentenceTransformer("all-MiniLM-L6-v2")
-        print("✅ Embedding model loaded")
+        print(f"Loading embedding model: {EMBEDDING_MODEL}")
+        _model = SentenceTransformer(EMBEDDING_MODEL)
+        print("Embedding model loaded")
     return _model
 
 

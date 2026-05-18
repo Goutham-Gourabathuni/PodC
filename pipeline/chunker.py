@@ -1,8 +1,13 @@
 import os
 import subprocess
+import tempfile
+
+
+def _media_dir():
+    return os.getenv("MEDIA_DIR") or os.path.join(tempfile.gettempdir(), "podc-media")
 
 def chunk_audio(audio_path, chunk_duration=300):
-    output_dir = "media/chunks"
+    output_dir = os.path.join(_media_dir(), "chunks")
     os.makedirs(output_dir, exist_ok=True)
 
     for f in os.listdir(output_dir):

@@ -23,7 +23,7 @@ The result is structured, searchable, topic-wise knowledge from raw audio.
 
 PodC follows a modular, production-style GenAI pipeline:
 
-1. Audio ingestion via Streamlit UI
+1. Audio ingestion via React UI or legacy Streamlit UI
 2. Automatic Speech Recognition (Whisper)
 3. Text cleaning & sentence segmentation
 4. Sentence embedding using MiniLM
@@ -57,7 +57,8 @@ Backend
 - Python modular pipeline design
 
 UI
-- Streamlit (interactive web app)
+- React + Tailwind CSS (deployable static web app)
+- Streamlit (legacy interactive web app)
 - Dark / Light mode toggle
 - Human review controls
 
@@ -68,7 +69,8 @@ Other
 | Component                   | Technology                       | Version / Model         |
 | --------------------------- | -------------------------------- | ----------------------- |
 | **Backend Framework**       | FastAPI                          | 0.128.0                 |
-| **Frontend UI**             | Streamlit                        | 1.53.0                  |
+| **Frontend UI**             | React + Tailwind CSS             | Vite app in frontend-react |
+| **Legacy Frontend UI**      | Streamlit                        | 1.53.0                  |
 | **ASR (Speech-to-Text)**    | OpenAI Whisper                   | base/latest - 20250625  |
 | **Audio Processing**        | FFmpeg + Python                  | Latest                  |
 | **Embeddings**              | Sentence-BERT                    | all-MiniLM-L6-v2        |
@@ -121,6 +123,9 @@ Intern_Submissions/
     │
     ├── frontend/
     │   └── app.py               # Streamlit UI
+    ├── frontend-react/
+    │   ├── src/                  # React + Tailwind UI
+    │   └── package.json
     │
     ├── pipeline/
     │   ├── workflow_main.py     # Main pipeline orchestration
@@ -257,13 +262,56 @@ GEMINI_API_KEY="your_gemini_api_key_here"
 uvicorn backend.main:app --reload
 ```
 
-6️⃣ Start frontend
+Runtime uploads, chunks, and generated PDFs default to your OS temp folder so `uvicorn --reload` does not restart while a podcast is being processed. To store runtime media in the repo again, set `MEDIA_DIR=media` in `.env`, but prefer running without `--reload` for long podcast processing.
+
+6️⃣ Start React frontend
+```bash
+cd frontend-react
+npm install
+copy .env.example .env   # Windows
+npm run dev
+```
+
+Set `VITE_API_BASE_URL` in `frontend-react/.env` if the backend is not running at `http://127.0.0.1:8000`.
+
+React frontend runs at:
+http://localhost:5173
+
+Legacy Streamlit frontend:
 ```bash
 streamlit run frontend/app.py
 ```
 
-Frontend runs at:
+Legacy frontend runs at:
 http://localhost:8501
+
+---
+
+## Deployment
+
+Backend deployment is prepared for HuggingFace Spaces with the root `Dockerfile`.
+
+Required backend environment variables:
+```bash
+GEMINI_API_KEY="your_gemini_api_key_here"
+CORS_ORIGINS="https://your-frontend-domain.example"
+```
+
+The backend model IDs can be changed without code edits:
+```bash
+WHISPER_MODEL=base
+SUMMARIZER_MODEL=facebook/bart-large-cnn
+EMBEDDING_MODEL=all-MiniLM-L6-v2
+SPACY_MODEL=en_core_web_sm
+GEMINI_MODEL=gemini-2.5-flash
+```
+
+For the deployed React website, set:
+```bash
+VITE_API_BASE_URL="https://your-huggingface-space.hf.space"
+```
+
+See `DEPLOYMENT.md` for the short deployment checklist.
 
 ---
 

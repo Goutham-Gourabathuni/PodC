@@ -2,7 +2,12 @@ from reportlab.lib.pagesizes import A4
 from reportlab.pdfgen import canvas
 from textwrap import wrap
 import os
+import tempfile
 import uuid
+
+
+def _media_dir():
+    return os.getenv("MEDIA_DIR") or os.path.join(tempfile.gettempdir(), "podc-media")
 
 def generate_pdf(topics, episode_summary=None):
     """
@@ -10,8 +15,9 @@ def generate_pdf(topics, episode_summary=None):
     Returns path to generated PDF
     """
 
-    os.makedirs("media/pdfs", exist_ok=True)
-    file_path = f"media/pdfs/podcast_{uuid.uuid4()}.pdf"
+    output_dir = os.path.join(_media_dir(), "pdfs")
+    os.makedirs(output_dir, exist_ok=True)
+    file_path = os.path.join(output_dir, f"podcast_{uuid.uuid4()}.pdf")
 
     c = canvas.Canvas(file_path, pagesize=A4)
     width, height = A4

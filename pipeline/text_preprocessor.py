@@ -1,10 +1,11 @@
 from nltk.tokenize import sent_tokenize
 import nltk
 
-try:
-    nltk.data.find("tokenizers/punkt")
-except LookupError:
-    nltk.download("punkt")
+for tokenizer in ("punkt", "punkt_tab"):
+    try:
+        nltk.data.find(f"tokenizers/{tokenizer}")
+    except LookupError:
+        nltk.download(tokenizer, quiet=True)
 
 
 def segment_into_sentences(transcript):
