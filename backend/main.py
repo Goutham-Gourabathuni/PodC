@@ -184,3 +184,13 @@ def download_pdf():
         raise
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
+    
+@app.on_event("startup")
+async def startup():
+    import os
+    print("PORT =", os.getenv("PORT"))
+    print("Current dir =", os.getcwd())
+    
+@app.get("/ping")
+def ping():
+    return {"pong": True}
