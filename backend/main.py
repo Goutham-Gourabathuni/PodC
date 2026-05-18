@@ -12,9 +12,9 @@ import tempfile
 from threading import Lock
 from pathlib import Path
 
-from pipeline.workflow_main import run_pipeline
-from pipeline.pdf_exporter import generate_pdf
-from pipeline.gemini_qa import answer_question
+#from pipeline.workflow_main import run_pipeline
+#from pipeline.pdf_exporter import generate_pdf
+#from pipeline.gemini_qa import answer_question
 # from pipeline.openai_qa import answer_question  # switch later if needed
 
 # -----------------------------
@@ -101,6 +101,7 @@ def models():
 
 @app.post("/process")
 async def process_podcast(file: UploadFile = File(...)):
+    from pipeline.workflow_main import run_pipeline
     global LAST_TRANSCRIPT_TEXT, run_pipeline_last_result
 
     if not PROCESS_LOCK.acquire(blocking=False):
@@ -143,6 +144,7 @@ async def process_podcast(file: UploadFile = File(...)):
 
 @app.get("/ask")
 def ask_question(question: str):
+    from pipeline.gemini_qa import answer_question
     if not LAST_TRANSCRIPT_TEXT:
         return {"answer": "No podcast has been processed yet."}
 
@@ -162,6 +164,7 @@ def ask_question(question: str):
 
 @app.post("/download-pdf")
 def download_pdf():
+    from pipeline.pdf_exporter import generate_pdf
     try:
         if not run_pipeline_last_result:
             raise HTTPException(
